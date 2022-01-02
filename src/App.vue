@@ -1,0 +1,51 @@
+<template>
+  <main class='m-auto bg-grey-955 dark:bg-blue-955 min-h-screen'>
+    <NavBar />
+
+     <div class='lg:flex px-5 sm:px-0 justify-between items-center mt-10 container m-auto space-y-10 lg:space-y-0'>
+       <SearchBar @set-search="search = $event" />
+       <RegionSelection @set-region-filter="region = $event" />
+     </div>
+
+      <div v-if="loading" class='grid px-10 sm:px-0 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white '>
+        Loading...
+      </div>
+      <div v-if="filtered" class='grid px-10 sm:px-0 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white '>
+        <Card
+          v-for="c in filtered"
+          :key="c.ccn3"
+          :flag="c.flags.png"
+          :name="c.name.official"
+          :capital="c.capital"
+          :population="c.population"
+          :region="c.region" />
+      </div>
+  </main>
+</template>
+
+<script setup>
+import NavBar from './components/NavBar.vue'
+import SearchBar from './components/SearchBar.vue'
+import Card from './components/Card.vue'
+import RegionSelection from './components/RegionSelection.vue'
+import useCountries from './api/useCountries'
+import { computed, onMounted, ref } from 'vue'
+const { countries, loading, getCountries } = useCountries()
+const search = ref('')
+const region = ref('')
+
+onMounted(getCountries)
+const filtered = computed(() => {
+  let result = countries.value
+  if(search.value !== ''){
+    result = countries.value.filter(country => country.name.official.toLowerCase().includes(search.value.toLowerCase()))
+  }
+
+  if(region.value !== ''){
+    result = result.filter(country => country.region === region.value)
+  }
+  return result
+})
+
+
+</script>
