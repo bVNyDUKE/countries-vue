@@ -3,8 +3,8 @@
     <NavBar />
 
      <div class='lg:flex px-5 sm:px-0 justify-between items-center mt-10 container m-auto space-y-10 lg:space-y-0'>
-       <SearchBar @set-search="search = $event" />
-       <RegionSelection @set-region-filter="region = $event" />
+       <SearchBar />
+       <RegionSelection />
      </div>
 
       <div v-if="loading" class='grid px-10 sm:px-0 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white '>
@@ -24,28 +24,26 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
+
 import NavBar from './components/NavBar.vue'
 import SearchBar from './components/SearchBar.vue'
 import Card from './components/Card.vue'
 import RegionSelection from './components/RegionSelection.vue'
-import useCountries from './api/useCountries'
-import { computed, onMounted, ref } from 'vue'
+
+import useCountries from './composables/useCountries'
+import useFilters from './composables/useFilters'
+
 const { countries, loading, getCountries } = useCountries()
-const search = ref('')
-const region = ref('')
+const { filters } = useFilters()
 
 onMounted(getCountries)
-const filtered = computed(() => {
-  let result = countries.value
-  if(search.value !== ''){
-    result = countries.value.filter(country => country.name.official.toLowerCase().includes(search.value.toLowerCase()))
-  }
 
-  if(region.value !== ''){
-    result = result.filter(country => country.region === region.value)
-  }
-  return result
-})
+const filtered = computed(() => {
+  let data = filters.search === '' ? countries.value : countries.value.filter(country => country.name.official.toLowerCase().includes(filters.search.toLowerCase()))
+  return data = filters.region === '' ? data : countries.value.filter(country => country.region === filters.region)
+}
+)
 
 
 </script>

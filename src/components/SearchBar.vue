@@ -32,9 +32,10 @@
 </template>
 <script setup>
 import { ref, watch } from 'vue'
-const emit = defineEmits(['set-search'])
+import useSearch from '../composables/useFilters'
 const searching = ref(false)
 const searchInput = ref('')
+const { setSearch } = useSearch()
 
 var timeout
 watch(searchInput, () => {
@@ -42,7 +43,7 @@ watch(searchInput, () => {
   searching.value = true
   timeout = setTimeout(() => {
     searching.value = false
-    emit('set-search', searchInput.value)
+    setSearch(searchInput.value)
   }, 500 )
 } )
 

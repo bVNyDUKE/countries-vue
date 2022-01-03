@@ -19,8 +19,10 @@
 
 <script setup>
 import { onUnmounted, ref } from 'vue'
-const emit = defineEmits(['set-region-filter'])
+import useFilters from '../composables/useFilters'
+
 const regions = ['Africa', 'Americas', 'Asia','Antarctic', 'Europe', 'Oceania']
+const { setRegion } = useFilters()
 const show = ref(false)
 const selected = ref('')
 const trigger = ref(null)
@@ -46,7 +48,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside, true
 
 const dropdownClick = (region) => {
   selected.value = region
-  emit('set-region-filter', selected.value)
+  setRegion(selected.value)
   show.value = false
 }
 
