@@ -75,8 +75,8 @@
               v-for="border in borders"
               :key="border"
               class="inline-block place-content-center bg-white text-blue-955 dark:bg-blue-950 dark:text-gray-400 px-8 p-2 mx-2 rounded-sm shadow-2xl hover:cursor-pointer"
-              @click="router.push({name: 'Country', params: {country:border}})"
-            >{{ border }}</span>
+              @click="router.push({name: 'Country', params: {country:border.code}})"
+            >{{ border.name }}</span>
           </div>
         </div>
       </div>
@@ -88,8 +88,10 @@
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import useApi from '../composables/useApi'
+import useStore from '../composables/useStore'
 
 const { data: country, loading, getData } = useApi()
+const { getCountryByCode } = useStore()
 
 const router = useRouter()
 const route = useRoute()
@@ -107,6 +109,11 @@ const topLevelDomain = computed(() => !!country.value.topLevelDomain && country.
 const currencies = computed(() => !!country.value.currencies && country.value.currencies.reduce((prev, next) => [...prev, next.name], []).join(', '))
 const languages = computed(() => !!country.value.languages && country.value.languages.reduce((prev, next) => [...prev, next.name], []).join(', '))
 const flag = computed(() => !!country.value.flags && country.value.flags.svg)
-const borders = computed(() => !!country.value.borders && country.value.borders)
+const borders = computed(() => !!country.value.borders && country.value.borders.map(
+  code =>
+    getCountryByCode(code).map(
+      country => {
+        return { name: country.name.common, code: country.cca3 }
+      })[0]))
 
 </script>

@@ -30,25 +30,24 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 
 import SearchBar from '../components/SearchBar.vue'
 import Card from '../components/Card.vue'
 import RegionSelection from '../components/RegionSelection.vue'
 
-import useApi from '../composables/useApi'
 import useFilters from '../composables/useFilters'
+import useStore from '../composables/useStore'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const { data: countries, loading, getData } = useApi()
 const { filters } = useFilters()
 
-onMounted(getData('https://restcountries.com/v3.1/all'))
+const { store, loading } = useStore()
 
 const filtered = computed(() => {
-  let withFilter = filters.search === '' ? countries.value : countries.value.filter(country => country.name.official.toLowerCase().includes(filters.search.toLowerCase()))
-  return withFilter = filters.region === '' ? withFilter : countries.value.filter(country => country.region === filters.region)
+  let withFilter = filters.search === '' ? store.countries : store.countries.filter(country => country.name.official.toLowerCase().includes(filters.search.toLowerCase()))
+  return withFilter = filters.region === '' ? withFilter : store.countries.filter(country => country.region === filters.region)
 }
 )
 
