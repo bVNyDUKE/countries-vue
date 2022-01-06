@@ -14,7 +14,7 @@ export default function useStore(){
   }
 
   const getCountryByCode = (code) => {
-    return store.countries.filter(country => country.cca3 === code)
+    return store.countries.find(country => country.cca3 === code)
   }
 
   return {

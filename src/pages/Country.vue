@@ -109,11 +109,12 @@ const topLevelDomain = computed(() => !!country.value.topLevelDomain && country.
 const currencies = computed(() => !!country.value.currencies && country.value.currencies.reduce((prev, next) => [...prev, next.name], []).join(', '))
 const languages = computed(() => !!country.value.languages && country.value.languages.reduce((prev, next) => [...prev, next.name], []).join(', '))
 const flag = computed(() => !!country.value.flags && country.value.flags.svg)
-const borders = computed(() => !!country.value.borders && country.value.borders.map(
-  code =>
-    getCountryByCode(code).map(
-      country => {
-        return { name: country.name.common, code: country.cca3 }
-      })[0]))
+
+const borders = computed(() =>
+  !!country.value.borders &&
+  country.value.borders
+    .map( code => getCountryByCode(code))
+    .map( country => { return { name: country.name.common, code: country.cca3 } })
+)
 
 </script>
