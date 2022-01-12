@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, readonly } from 'vue'
 import useApi from './useApi'
 
 const store = reactive({
@@ -18,7 +18,7 @@ export default function useStore(){
   }
 
   return {
-    store,
+    store: readonly(store),
     loading,
     getCountries,
     getCountryByCode
