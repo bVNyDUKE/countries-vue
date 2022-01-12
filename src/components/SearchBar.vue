@@ -44,11 +44,13 @@
   </div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import useSearch from '../composables/useFilters'
 const searching = ref(false)
 const searchInput = ref('')
-const { setSearch } = useSearch()
+const { setSearch, filters } = useSearch()
+
+onMounted(() => searchInput.value = filters.search)
 
 var timeout
 watch(searchInput, () => {
