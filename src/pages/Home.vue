@@ -18,7 +18,7 @@
       <Card
         v-for="c in filtered"
         :key="c.ccn3"
-        :flag="c.flags.png"
+        :flag="c.flags.svg"
         :name="c.name.official"
         :capital="c.capital"
         :population="c.population"
@@ -42,7 +42,6 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { filters } = useFilters()
-
 const { store, loading } = useStore()
 
 const filtered = computed(() => {
