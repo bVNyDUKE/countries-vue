@@ -114,7 +114,7 @@ const borders = computed(() =>
   !!country.value.borders &&
   country.value.borders
     .map( code => getCountryByCode(code))
-    .map( country => { return { name: country.name.common, code: country.cca3 } })
+    .map( country =>  !!country && { name: country.name.common, code: country.cca3 } )
 )
 
 </script>
