@@ -1,7 +1,7 @@
 <template>
     <article class='bg-white text-blue-955 dark:bg-blue-950 dark:text-white shadow-md rounded-md overflow-hidden hover:cursor-pointer hover:shadow-xl'>
 
-      <img class='object-cover' :src="flag" :alt="name" />
+      <img class='object-cover md:w-[365px] md:h-[256px] float-left' :src="flag" :alt="name" />
 
       <div class='h-1/2 px-5 pb-8 pt-5'>
         <h2 class='font-bold text-lg mb-3'>{{ name }}</h2>
