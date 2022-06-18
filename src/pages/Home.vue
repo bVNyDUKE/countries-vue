@@ -13,7 +13,7 @@
     >Loading...</div>
     <div
       v-if="filtered"
-      class="grid sm:px-0 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-10 container m-auto text-blue-960 dark:text-white items-start"
+      class="grid px-10 sm:px-0 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-10 m-auto container text-blue-960 dark:text-white items-start"
     >
       <Card
         v-for="c in filtered"

@@ -33,7 +33,7 @@ getCountries()
 }
 
 main, article, div, p, nav, input, span, button{
-  transition-property: all;
+  transition-property: color, background-color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 1000ms;
 }
