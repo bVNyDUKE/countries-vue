@@ -1,3 +1,39 @@
+<script setup>
+import { computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import useApi from '../composables/useApi'
+import useStore from '../composables/useStore'
+import CountryLoader from '../components/CountryLoader.vue'
+
+const { data: country, loading, getData } = useApi()
+const { getCountryByCode } = useStore()
+
+const router = useRouter()
+const route = useRoute()
+
+getData(`https://restcountries.com/v2/alpha/${route.params.country}`)
+watch(route, () => route.params.country !== undefined && getData(`https://restcountries.com/v2/alpha/${route.params.country}`))
+
+const name = computed(() => country.value && country.value.name)
+const nativeName = computed(() => !!country.value.nativeName && country.value.nativeName)
+const region = computed(() => !!country.value.region && country.value.region)
+const subregion = computed(() => !!country.value.subregion && country.value.subregion)
+const capital = computed(() => !!country.value.capital && country.value.capital || 'None')
+const population = computed(() => !!country.value.population && country.value.population.toLocaleString())
+const topLevelDomain = computed(() => !!country.value.topLevelDomain && country.value.topLevelDomain[0])
+const currencies = computed(() => !!country.value.currencies && country.value.currencies.reduce((prev, next) => [...prev, next.name], []).join(', '))
+const languages = computed(() => !!country.value.languages && country.value.languages.reduce((prev, next) => [...prev, next.name], []).join(', '))
+const flag = computed(() => !!country.value.flags && country.value.flags.svg)
+
+const borders = computed(() =>
+  !!country.value.borders &&
+  country.value.borders
+    .map( code => getCountryByCode(code))
+    .map( country =>  !!country && { name: country.name.common, code: country.cca3 } )
+)
+
+</script>
+
 <template>
   <div class="container m-auto mt-5 sm:mt-10 p-10 text-blue-955 dark:text-white">
     <div class="mb-20">
@@ -95,39 +131,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import useApi from '../composables/useApi'
-import useStore from '../composables/useStore'
-import CountryLoader from '../components/CountryLoader.vue'
-
-const { data: country, loading, getData } = useApi()
-const { getCountryByCode } = useStore()
-
-const router = useRouter()
-const route = useRoute()
-
-getData(`https://restcountries.com/v2/alpha/${route.params.country}`)
-watch(route, () => getData(`https://restcountries.com/v2/alpha/${route.params.country}`))
-
-const name = computed(() => country.value && country.value.name)
-const nativeName = computed(() => !!country.value.nativeName && country.value.nativeName)
-const region = computed(() => !!country.value.region && country.value.region)
-const subregion = computed(() => !!country.value.subregion && country.value.subregion)
-const capital = computed(() => !!country.value.capital && country.value.capital || 'None')
-const population = computed(() => !!country.value.population && country.value.population.toLocaleString())
-const topLevelDomain = computed(() => !!country.value.topLevelDomain && country.value.topLevelDomain[0])
-const currencies = computed(() => !!country.value.currencies && country.value.currencies.reduce((prev, next) => [...prev, next.name], []).join(', '))
-const languages = computed(() => !!country.value.languages && country.value.languages.reduce((prev, next) => [...prev, next.name], []).join(', '))
-const flag = computed(() => !!country.value.flags && country.value.flags.svg)
-
-const borders = computed(() =>
-  !!country.value.borders &&
-  country.value.borders
-    .map( code => getCountryByCode(code))
-    .map( country =>  !!country && { name: country.name.common, code: country.cca3 } )
-)
-
-</script>

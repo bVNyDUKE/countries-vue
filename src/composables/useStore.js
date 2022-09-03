@@ -1,15 +1,18 @@
-import { reactive, readonly } from 'vue'
+import { reactive, readonly, ref } from 'vue'
 import useApi from './useApi'
 
 const store = reactive({
   countries: []
 })
 
-export default function useStore(){
-  const { data, loading, getData } = useApi()
+export default function useStore() {
+  const { data, getData } = useApi()
+  const loading = ref(false)
 
-  const getCountries = () => {
-    getData('https://restcountries.com/v3.1/all')
+  const getCountries = async () => {
+    loading.value = true
+    await getData('https://restcountries.com/v3.1/all')
+    loading.value = false
     store.countries = data
   }
 
