@@ -69,7 +69,7 @@ const filtered = computed(() => {
     )
 
   withFilter = filters.region === '' ? withFilter :
-    countries.value?.filter(country => country.region === filters.region)
+    withFilter.filter(country => country.region === filters.region)
 
   return withFilter
 })
