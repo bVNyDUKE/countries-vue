@@ -10,9 +10,14 @@
     <div
       v-if="loading"
       class="grid px-10 sm:px-0 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white"
-    >Loading...</div>
+    >
+      <CardLoader
+        v-for="i in 10"
+        :key="i"
+      />
+    </div>
     <div
-      v-if="filtered"
+      v-else
       class="grid px-10 sm:px-0 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-10 m-auto container text-blue-960 dark:text-white items-start"
     >
       <Card
@@ -31,14 +36,14 @@
 
 <script setup>
 import { computed } from 'vue'
-
-import SearchBar from '../components/SearchBar.vue'
-import Card from '../components/Card.vue'
-import RegionSelection from '../components/RegionSelection.vue'
-
+import { useRouter } from 'vue-router'
 import useFilters from '../composables/useFilters'
 import useStore from '../composables/useStore'
-import { useRouter } from 'vue-router'
+
+import SearchBar from '../components/SearchBar.vue'
+import RegionSelection from '../components/RegionSelection.vue'
+import Card from '../components/Card.vue'
+import CardLoader from '../components/CardLoader.vue'
 
 const router = useRouter()
 const { filters } = useFilters()

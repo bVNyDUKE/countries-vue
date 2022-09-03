@@ -19,16 +19,28 @@
             d="M7 16l-4-4m0 0l4-4m-4 4h18"
           />
         </svg>
-        <div class="font-semibold">Back</div>
+        <div class="font-semibold">
+          Back
+        </div>
       </button>
     </div>
-    <div v-if="loading">Loading...</div>
-    <div v-if="!loading" class="lg:flex lg:justify-start lg:space-x-10">
-      <img class="object-cover sm:w-[645px] sm:h-[465px] float-left" :src="flag" />
+    <div v-if="loading">
+      <CountryLoader />
+    </div>
+    <div
+      v-if="!loading"
+      class="lg:flex lg:justify-start lg:space-x-10"
+    >
+      <img
+        class="object-cover sm:w-[645px] sm:h-[465px] float-left"
+        :src="flag"
+      >
 
       <div class="clear-left">
         <div class="space-y-10">
-          <h1 class="text-3xl font-bold pt-10">{{ name }}</h1>
+          <h1 class="text-3xl font-bold pt-10">
+            {{ name }}
+          </h1>
           <div
             class="space-y-10 lg:flex lg:items-start lg:justify-start lg:space-x-10 lg:space-y-0"
           >
@@ -89,6 +101,7 @@ import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import useApi from '../composables/useApi'
 import useStore from '../composables/useStore'
+import CountryLoader from '../components/CountryLoader.vue'
 
 const { data: country, loading, getData } = useApi()
 const { getCountryByCode } = useStore()
