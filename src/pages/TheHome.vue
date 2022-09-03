@@ -41,10 +41,9 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import useFilters from '../composables/useFilters'
-import { getAllCountries } from '../composables/useStore'
+import { getAllCountries, filters } from '../store'
 
 import SearchBar from '../components/SearchBar.vue'
 import RegionSelection from '../components/RegionSelection.vue'
@@ -52,24 +51,26 @@ import Card from '../components/Card.vue'
 import CardLoader from '../components/CardLoader.vue'
 
 const router = useRouter()
-const { filters } = useFilters()
 const countries = ref(null)
 const error = ref(null)
-const filtered = ref(null)
 
 watchEffect(async () => {
   const { data, error } = await getAllCountries()
   countries.value = data
   error.value = error
+})
+
+const filtered = computed(() => {
 
   let withFilter = filters.search === '' ?
     countries.value :
-    countries.value.filter(country =>
+    countries.value?.filter(country =>
       country.name.official.toLowerCase().includes(filters.search.toLowerCase())
     )
 
-  filtered.value = filters.region === '' ? withFilter :
-    countries.value.filter(country => country.region === filters.region)
-})
+  withFilter = filters.region === '' ? withFilter :
+    countries.value?.filter(country => country.region === filters.region)
 
+  return withFilter
+})
 </script>

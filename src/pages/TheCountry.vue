@@ -1,30 +1,38 @@
 <script setup>
-import { computed, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCountryFromStore, getCountryFromApi } from '../composables/useStore'
+import { getCountryFromStore, getCountryFromApi } from '../store'
 import CountryLoader from '../components/CountryLoader.vue'
-
 
 const router = useRouter()
 const route = useRoute()
 const country = ref(null)
-const loading = ref(true)
+const error = ref(null)
+const borders = ref(null)
+const loading = ref(false)
 
 watchEffect(async () => {
   if(route.params.country !== undefined){
-    const { data } = getCountryFromApi(`https://restcountries.com/v2/alpha/${route.params.country}`)
+    loading.value = true
+    const { data, error: err } = await getCountryFromApi(route.params.country)
     country.value = data
+    error.value = err
+
+    if(country.value.borders){
+
+      borders.value = await Promise.all(country.value.borders
+        .map( async code => {
+          const country = await getCountryFromStore(code)
+          return { name: country.name.common, code: country.cca3 }
+        }))
+    }
     loading.value = false
-  }})
+  }
+})
 
 const currencies = computed(() => country?.value?.currencies?.reduce((prev, next) => [...prev, next.name], []).join(', '))
 const languages = computed(() => country?.value?.languages?.reduce((prev, next) => [...prev, next.name], []).join(', '))
-
-const borders = computed(() =>
-  country?.value?.borders
-    ?.map( code => getCountryFromStore(code))
-    ?.map( country =>  ({ name: country?.name?.common, code: country?.cca3 }) )
-)
+const domain = computed(() => country?.value?.topLevelDomain && country.value.topLevelDomain[0])
 
 </script>
 
@@ -58,7 +66,7 @@ const borders = computed(() =>
       <CountryLoader />
     </div>
     <div
-      v-else
+      v-else-if="country"
       class="lg:flex lg:items-center lg:flex-col xl:flex-row xl:justify-start xl:space-x-10"
     >
       <img
@@ -99,7 +107,7 @@ const borders = computed(() =>
             <div>
               <p>
                 <span class="font-semibold">Top Level Domain:</span>
-                {{ country?.topLevelDomain[0] }}
+                {{ domain }}
               </p>
               <p>
                 <span class="font-semibold">Currencies:</span>
@@ -122,6 +130,9 @@ const borders = computed(() =>
           </div>
         </div>
       </div>
+    </div>
+    <div v-else>
+      An error occured
     </div>
   </div>
 </template>

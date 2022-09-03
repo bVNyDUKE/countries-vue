@@ -10,7 +10,14 @@
         fill="none"
         viewBox="0 0 24 24"
       >
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        />
         <path
           class="opacity-75"
           fill="currentColor"
@@ -40,15 +47,15 @@
       name="search"
       placeholder="Search for a country..."
       class="flex-grow focus:outline-none dark:bg-blue-950 text-grey-950 dark:text-white"
-    />
+    >
   </div>
 </template>
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import useSearch from '../composables/useFilters'
+import { filters } from '../store'
+
 const searching = ref(false)
 const searchInput = ref('')
-const { setSearch, filters } = useSearch()
 
 onMounted(() => searchInput.value = filters.search)
 
@@ -58,7 +65,7 @@ watch(searchInput, () => {
   searching.value = true
   timeout = setTimeout(() => {
     searching.value = false
-    setSearch(searchInput.value)
+    filters.search = searchInput
   }, 500)
 })
 

@@ -15,7 +15,12 @@
         viewBox="0 0 24 24"
         stroke="currentColor"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{2}" d="M19 9l-7 7-7-7" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="{2}"
+          d="M19 9l-7 7-7-7"
+        />
       </svg>
       <svg
         v-else
@@ -44,18 +49,19 @@
           :key="{ region }"
           class="hover:underline"
           @click="() => dropdownClick(region)"
-        >{{ region }}</li>
+        >
+          {{ region }}
+        </li>
       </ul>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onUnmounted, ref } from 'vue'
-import useFilters from '../composables/useFilters'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { filters } from '../store'
 
 const regions = ['Africa', 'Americas', 'Asia', 'Antarctic', 'Europe', 'Oceania']
-const { setRegion } = useFilters()
 const show = ref(false)
 const selected = ref('')
 const trigger = ref(null)
@@ -76,12 +82,14 @@ const handleClickOutside = event => {
   }
 }
 
-document.addEventListener('click', handleClickOutside, true)
+onMounted(() => {
+  selected.value = filters.region
+  document.addEventListener('click', handleClickOutside, true)
+})
 onUnmounted(() => document.removeEventListener('click', handleClickOutside, true))
 
 const dropdownClick = (region) => {
-  selected.value = region
-  setRegion(selected.value)
+  selected.value = filters.region = region
   show.value = false
 }
 
