@@ -1,14 +1,15 @@
 <template>
-  <main class='m-auto bg-grey-955 dark:bg-blue-955 min-h-screen'>
-
+  <main class="m-auto bg-grey-955 dark:bg-blue-955 min-h-screen">
     <NavBar />
 
     <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
+      <transition
+        name="fade"
+        mode="out-in"
+      >
         <component :is="Component" />
       </transition>
     </router-view>
-
   </main>
 </template>
 
