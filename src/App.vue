@@ -15,11 +15,6 @@
 
 <script setup>
 import NavBar from './components/NavBar.vue'
-import useStore from './composables/useStore'
-
-const { getCountries } = useStore()
-
-getCountries()
 
 </script>
 <style>

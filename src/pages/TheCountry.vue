@@ -35,7 +35,7 @@ const borders = computed(() =>
 </script>
 
 <template>
-  <div class="container m-auto mt-5 sm:mt-10 p-10 text-blue-955 dark:text-white">
+  <div class="container mx-auto mt-5 sm:mt-10 p-10 text-blue-955 dark:text-white">
     <div class="mb-20">
       <button
         class="flex justify-center items-center bg-white text-blue-955 dark:bg-blue-950 dark:text-gray-400 w-32 p-2 space-x-2 rounded-sm shadow-2xl"
@@ -64,8 +64,8 @@ const borders = computed(() =>
       <CountryLoader />
     </div>
     <div
-      v-if="!loading"
-      class="lg:flex lg:justify-start lg:space-x-10"
+      v-else
+      class="lg:flex lg:items-center lg:flex-col xl:flex-row xl:justify-start xl:space-x-10"
     >
       <img
         class="object-cover sm:w-[645px] sm:h-[465px] float-left"
@@ -78,7 +78,7 @@ const borders = computed(() =>
             {{ name }}
           </h1>
           <div
-            class="space-y-10 lg:flex lg:items-start lg:justify-start lg:space-x-10 lg:space-y-0"
+            class="space-y-10 md:flex md:items-start md:justify-start md:space-x-10 md:space-y-0"
           >
             <div>
               <p>

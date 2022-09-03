@@ -1,6 +1,6 @@
 <template>
   <div class="lg:flex lg:justify-start lg:space-x-10 animate-pulse">
-    <div class="object-cover sm:w-[645px] sm:h-[465px] bg-gray-300" />
+    <div class="sm:w-[645px] sm:h-[465px] bg-gray-300" />
     <div>
       <div class="space-y-10">
         <div class="h-12 w-32 bg-gray-400 rounded-xl pt-10" />

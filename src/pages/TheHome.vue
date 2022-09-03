@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import useFilters from '../composables/useFilters'
 import useStore from '../composables/useStore'
@@ -47,7 +47,9 @@ import CardLoader from '../components/CardLoader.vue'
 
 const router = useRouter()
 const { filters } = useFilters()
-const { store, loading } = useStore()
+const { store, loading, getCountries } = useStore()
+
+onBeforeMount(() => store.countries.length === 0 && getCountries())
 
 const filtered = computed(() => {
   let withFilter = filters.search === '' ? store.countries : store.countries.filter(country => country.name.official.toLowerCase().includes(filters.search.toLowerCase()))
