@@ -1,35 +1,29 @@
 <script setup>
-import { computed, watch } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import useApi from '../composables/useApi'
-import useStore from '../composables/useStore'
+import { getCountryFromStore, getCountryFromApi } from '../composables/useStore'
 import CountryLoader from '../components/CountryLoader.vue'
 
-const { data: country, loading, getData } = useApi()
-const { getCountryByCode } = useStore()
 
 const router = useRouter()
 const route = useRoute()
+const country = ref(null)
+const loading = ref(true)
 
-getData(`https://restcountries.com/v2/alpha/${route.params.country}`)
-watch(route, () => route.params.country !== undefined && getData(`https://restcountries.com/v2/alpha/${route.params.country}`))
+watchEffect(async () => {
+  if(route.params.country !== undefined){
+    const { data } = getCountryFromApi(`https://restcountries.com/v2/alpha/${route.params.country}`)
+    country.value = data
+    loading.value = false
+  }})
 
-const name = computed(() => country.value && country.value.name)
-const nativeName = computed(() => !!country.value.nativeName && country.value.nativeName)
-const region = computed(() => !!country.value.region && country.value.region)
-const subregion = computed(() => !!country.value.subregion && country.value.subregion)
-const capital = computed(() => !!country.value.capital && country.value.capital || 'None')
-const population = computed(() => !!country.value.population && country.value.population.toLocaleString())
-const topLevelDomain = computed(() => !!country.value.topLevelDomain && country.value.topLevelDomain[0])
-const currencies = computed(() => !!country.value.currencies && country.value.currencies.reduce((prev, next) => [...prev, next.name], []).join(', '))
-const languages = computed(() => !!country.value.languages && country.value.languages.reduce((prev, next) => [...prev, next.name], []).join(', '))
-const flag = computed(() => !!country.value.flags && country.value.flags.svg)
+const currencies = computed(() => country?.value?.currencies?.reduce((prev, next) => [...prev, next.name], []).join(', '))
+const languages = computed(() => country?.value?.languages?.reduce((prev, next) => [...prev, next.name], []).join(', '))
 
 const borders = computed(() =>
-  !!country.value.borders &&
-  country.value.borders
-    .map( code => getCountryByCode(code))
-    .map( country =>  !!country && { name: country.name.common, code: country.cca3 } )
+  country?.value?.borders
+    ?.map( code => getCountryFromStore(code))
+    ?.map( country =>  ({ name: country?.name?.common, code: country?.cca3 }) )
 )
 
 </script>
@@ -69,13 +63,13 @@ const borders = computed(() =>
     >
       <img
         class="object-cover sm:w-[645px] sm:h-[465px] float-left"
-        :src="flag"
+        :src="country?.flag"
       >
 
       <div class="clear-left">
         <div class="space-y-10">
           <h1 class="text-3xl font-bold pt-10">
-            {{ name }}
+            {{ country?.name }}
           </h1>
           <div
             class="space-y-10 md:flex md:items-start md:justify-start md:space-x-10 md:space-y-0"
@@ -83,29 +77,29 @@ const borders = computed(() =>
             <div>
               <p>
                 <span class="font-semibold">Native Name:</span>
-                {{ nativeName }}
+                {{ country?.nativeName }}
               </p>
               <p>
                 <span class="font-semibold">Population:</span>
-                {{ population }}
+                {{ country?.population }}
               </p>
               <p>
                 <span class="font-semibold">Region:</span>
-                {{ region }}
+                {{ country?.region }}
               </p>
               <p>
                 <span class="font-semibold">Sub Region:</span>
-                {{ subregion }}
+                {{ country?.region }}
               </p>
               <p>
                 <span class="font-semibold">Capital:</span>
-                {{ capital }}
+                {{ country?.capital || 'None' }}
               </p>
             </div>
             <div>
               <p>
                 <span class="font-semibold">Top Level Domain:</span>
-                {{ topLevelDomain }}
+                {{ country?.topLevelDomain[0] }}
               </p>
               <p>
                 <span class="font-semibold">Currencies:</span>
