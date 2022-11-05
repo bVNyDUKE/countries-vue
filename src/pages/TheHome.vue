@@ -31,11 +31,30 @@
         @click="router.push(`/${c.cca3}`)"
       />
     </div>
+    <div class="p-10 m-auto container flex justify-between">
+      <button
+        class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
+        @click="() => page !== 1 && page--"
+      >
+        Prev
+      </button>
+      <div
+        class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
+      >
+        {{ page }} of {{ total }}
+      </div>
+      <button
+        class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
+        @click="page++"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { filters } from "../store";
 
@@ -46,10 +65,16 @@ import CardLoader from "../components/CardLoader.vue";
 import { getAllCountries } from "../api";
 
 const router = useRouter();
+const page = ref(1);
+const total = ref(0);
 
 const { isLoading, isError, data, error } = getAllCountries();
 
 const countries = computed(() => {
+  if (isLoading.value) {
+    return [];
+  }
+
   let withFilter =
     filters.search === ""
       ? data.value
@@ -63,6 +88,13 @@ const countries = computed(() => {
     filters.region === ""
       ? withFilter
       : withFilter.filter((country) => country.region === filters.region);
+
+  if (withFilter.length > 20) {
+    const rangeFrom = (page.value - 1) * 20;
+    const rangeTo = page.value * 20;
+    total.value = Math.floor(withFilter.length / 20);
+    return withFilter.slice(rangeFrom, rangeTo);
+  }
 
   return withFilter;
 });
