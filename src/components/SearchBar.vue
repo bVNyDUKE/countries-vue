@@ -52,7 +52,6 @@
 </template>
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import { watchDebounced } from "@vueuse/core";
 import { filters } from "../store";
 
 const searching = ref(false);
@@ -60,16 +59,13 @@ const searchInput = ref("");
 
 onMounted(() => (searchInput.value = filters.search));
 
-watch(searchInput, () => (searching.value = true));
-
-watchDebounced(
-  searchInput,
-  () => {
-    filters.search = searchInput.value;
+let timeout;
+watch(searchInput, () => {
+  clearTimeout(timeout);
+  searching.value = true;
+  timeout = setTimeout(() => {
     searching.value = false;
-  },
-  {
-    debounce: 500,
-  }
-);
+    filters.search = searchInput.value;
+  }, 500);
+});
 </script>
