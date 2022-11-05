@@ -3,10 +3,7 @@
     <NavBar />
 
     <router-view v-slot="{ Component }">
-      <transition
-        name="fade"
-        mode="out-in"
-      >
+      <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
     </router-view>
@@ -14,8 +11,7 @@
 </template>
 
 <script setup>
-import NavBar from './components/NavBar.vue'
-
+import NavBar from "./components/NavBar.vue";
 </script>
 <style>
 .fade-enter-active,
@@ -28,7 +24,14 @@ import NavBar from './components/NavBar.vue'
   opacity: 0;
 }
 
-main, article, div, p, nav, input, span, button{
+main,
+article,
+div,
+p,
+nav,
+input,
+span,
+button {
   transition-property: color, background-color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 1000ms;
