@@ -6,12 +6,18 @@
       <SearchBar />
       <RegionSelection />
     </div>
+    <div
+      v-if="isLoading"
+      class="grid px-10 sm:px-0 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white"
+    >
+      <CardLoader v-for="i in 10" :key="i" />
+    </div>
 
     <div v-if="isError" class="text-red-500">
       Encountered an error: {{ error }}
     </div>
     <div
-      v-else-if="countries"
+      v-else
       class="grid px-10 sm:px-0 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-10 m-auto container text-blue-960 dark:text-white items-start"
     >
       <Card
@@ -25,12 +31,6 @@
         @click="router.push(`/${c.cca3}`)"
       />
     </div>
-    <div
-      v-else
-      class="grid px-10 sm:px-0 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white"
-    >
-      <CardLoader v-for="i in 10" :key="i" />
-    </div>
   </div>
 </template>
 
@@ -38,23 +38,16 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { filters } from "../store";
-import { useQuery } from "@tanstack/vue-query";
 
 import SearchBar from "../components/SearchBar.vue";
 import RegionSelection from "../components/RegionSelection.vue";
 import Card from "../components/Card.vue";
 import CardLoader from "../components/CardLoader.vue";
+import { getAllCountries } from "../api";
 
 const router = useRouter();
 
-const { isError, data, error } = useQuery({
-  queryKey: ["countries"],
-  queryFn: async () => {
-    const res = await fetch("https://restcountries.com/v3.1/all");
-    const countries = await res.json();
-    return countries;
-  },
-});
+const { isLoading, isError, data, error } = getAllCountries();
 
 const countries = computed(() => {
   let withFilter =

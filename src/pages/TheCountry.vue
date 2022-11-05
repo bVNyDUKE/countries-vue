@@ -39,22 +39,23 @@ const {
         <div class="font-semibold">Back</div>
       </button>
     </div>
-    <div v-if="loading">
+    <div v-if="isLoading">
       <CountryLoader />
     </div>
+    <div v-else-if="isError">An error occured</div>
     <div
-      v-else-if="country"
+      v-else
       class="lg:flex lg:items-center lg:flex-col xl:flex-row xl:justify-start xl:space-x-10"
     >
       <img
         class="object-cover sm:w-[645px] sm:h-[465px] float-left"
-        :src="country?.flag"
+        :src="country.flag"
       />
 
       <div class="clear-left">
         <div class="space-y-10">
           <h1 class="text-3xl font-bold pt-10">
-            {{ country?.name }}
+            {{ country.name }}
           </h1>
           <div
             class="space-y-10 md:flex md:items-start md:justify-start md:space-x-10 md:space-y-0"
@@ -62,37 +63,37 @@ const {
             <div>
               <p>
                 <span class="font-semibold">Native Name:</span>
-                {{ country?.nativeName }}
+                {{ country.nativeName }}
               </p>
               <p>
                 <span class="font-semibold">Population:</span>
-                {{ country?.population }}
+                {{ country.population }}
               </p>
               <p>
                 <span class="font-semibold">Region:</span>
-                {{ country?.region }}
+                {{ country.region }}
               </p>
               <p>
                 <span class="font-semibold">Sub Region:</span>
-                {{ country?.region }}
+                {{ country.subregion }}
               </p>
               <p>
                 <span class="font-semibold">Capital:</span>
-                {{ country?.capital || "None" }}
+                {{ country.capital }}
               </p>
             </div>
             <div>
               <p>
                 <span class="font-semibold">Top Level Domain:</span>
-                {{ domain }}
+                {{ country.domain }}
               </p>
               <p>
                 <span class="font-semibold">Currencies:</span>
-                {{ currencies }}
+                {{ country.currencies }}
               </p>
               <p>
                 <span class="font-semibold">Languages:</span>
-                {{ languages }}
+                {{ country.languages }}
               </p>
             </div>
           </div>
@@ -101,7 +102,7 @@ const {
               >Border Countries:</span
             >
             <span
-              v-for="border in borders"
+              v-for="border in country.borders"
               :key="border"
               class="inline-block place-content-center bg-white text-blue-955 dark:bg-blue-950 dark:text-gray-400 px-8 p-2 mx-2 rounded-sm shadow-2xl hover:cursor-pointer"
               @click="
@@ -116,6 +117,5 @@ const {
         </div>
       </div>
     </div>
-    <div v-else>An error occured</div>
   </div>
 </template>

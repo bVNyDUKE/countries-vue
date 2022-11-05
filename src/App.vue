@@ -2,9 +2,9 @@
   <main class="m-auto bg-grey-955 dark:bg-blue-955 min-h-screen">
     <NavBar />
 
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component, route }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" />
+        <component :is="Component" :key="route.path" />
       </transition>
     </router-view>
   </main>
