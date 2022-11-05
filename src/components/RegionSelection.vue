@@ -4,9 +4,9 @@
       ref="trigger"
       class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
     >
-      <span
-        class="whitespace-nowrap flex-grow"
-      >{{ selected === '' ? 'Filter by Region' : selected }}</span>
+      <span class="whitespace-nowrap flex-grow">{{
+        selected === "" ? "Filter by Region" : selected
+      }}</span>
       <svg
         v-if="selected === ''"
         xmlns="http://www.w3.org/2000/svg"
@@ -58,39 +58,47 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import { filters } from '../store'
+import { onMounted, onUnmounted, ref } from "vue";
+import { filters } from "../store";
 
-const regions = ['Africa', 'Americas', 'Asia', 'Antarctic', 'Europe', 'Oceania']
-const show = ref(false)
-const selected = ref('')
-const trigger = ref(null)
-const node = ref(null)
+const regions = [
+  "Africa",
+  "Americas",
+  "Asia",
+  "Antarctic",
+  "Europe",
+  "Oceania",
+];
+const show = ref(false);
+const selected = ref("");
+const trigger = ref(null);
+const node = ref(null);
 
-const handleClickOutside = event => {
-  if (trigger.value.contains(event.target) && selected.value === '') {
-    return show.value = !show.value
+const handleClickOutside = (event) => {
+  if (trigger.value.contains(event.target) && selected.value === "") {
+    return (show.value = !show.value);
   }
 
-  if (trigger.value.contains(event.target) && selected.value !== '') {
-    dropdownClick('')
-    return selected.value = ''
+  if (trigger.value.contains(event.target) && selected.value !== "") {
+    dropdownClick("");
+    return (selected.value = "");
   }
 
   if (!node.value.contains(event.target)) {
-    return show.value = false
+    return (show.value = false);
   }
-}
+};
 
 onMounted(() => {
-  selected.value = filters.region
-  document.addEventListener('click', handleClickOutside, true)
-})
-onUnmounted(() => document.removeEventListener('click', handleClickOutside, true))
+  selected.value = filters.region;
+  document.addEventListener("click", handleClickOutside, true);
+});
+onUnmounted(() =>
+  document.removeEventListener("click", handleClickOutside, true)
+);
 
 const dropdownClick = (region) => {
-  selected.value = filters.region = region
-  show.value = false
-}
-
+  selected.value = filters.region = region;
+  show.value = false;
+};
 </script>
