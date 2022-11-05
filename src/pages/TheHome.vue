@@ -1,68 +1,14 @@
-<template>
-  <div>
-    <div
-      class="lg:flex px-5 sm:px-0 justify-between items-center mt-10 container m-auto space-y-10 lg:space-y-0"
-    >
-      <SearchBar />
-      <RegionSelection />
-    </div>
-    <div
-      v-if="isLoading"
-      class="grid px-10 sm:px-0 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 items-stretch mt-10 container m-auto text-blue-960 dark:text-white"
-    >
-      <CardLoader v-for="i in 10" :key="i" />
-    </div>
-
-    <div v-if="isError" class="text-red-500">
-      Encountered an error: {{ error }}
-    </div>
-    <div
-      v-else
-      class="grid px-10 sm:px-0 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-10 m-auto container text-blue-960 dark:text-white items-start"
-    >
-      <Card
-        v-for="c in countries"
-        :key="c.ccn3"
-        :flag="c.flags.svg"
-        :name="c.name.common"
-        :capital="c.capital"
-        :population="c.population"
-        :region="c.region"
-        @click="router.push(`/${c.cca3}`)"
-      />
-    </div>
-    <div class="p-10 m-auto container flex justify-between">
-      <button
-        class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
-        @click="() => page !== 1 && page--"
-      >
-        Prev
-      </button>
-      <div
-        class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
-      >
-        {{ page }} of {{ total }}
-      </div>
-      <button
-        class="flex justify-between items-center rounded-md shadow-md h-16 px-5 bg-white text-blue-955 dark:bg-blue-950 dark:text-white"
-        @click="page++"
-      >
-        Next
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { filters } from "../store";
+import { getAllCountries } from "../api";
 
 import SearchBar from "../components/SearchBar.vue";
 import RegionSelection from "../components/RegionSelection.vue";
 import Card from "../components/Card.vue";
 import CardLoader from "../components/CardLoader.vue";
-import { getAllCountries } from "../api";
+import Paginator from "../components/Paginator.vue";
 
 const router = useRouter();
 const page = ref(1);
@@ -89,13 +35,64 @@ const countries = computed(() => {
       ? withFilter
       : withFilter.filter((country) => country.region === filters.region);
 
+  total.value = Math.ceil(withFilter.length / 20);
+
   if (withFilter.length > 20) {
     const rangeFrom = (page.value - 1) * 20;
     const rangeTo = page.value * 20;
-    total.value = Math.floor(withFilter.length / 20);
     return withFilter.slice(rangeFrom, rangeTo);
   }
 
   return withFilter;
 });
+
+const prevPage = () => page.value !== 1 && page.value--;
+const nextPage = () => page.value !== total.value && page.value++;
+const firstPage = () => (page.value = 1);
+const lastPage = () => (page.value = total.value);
 </script>
+
+<template>
+  <div>
+    <div
+      class="lg:flex px-5 sm:px-0 justify-between items-center mt-10 container m-auto space-y-10 lg:space-y-0"
+    >
+      <SearchBar />
+      <RegionSelection />
+    </div>
+    <div v-if="isLoading" class="card-grid">
+      <CardLoader v-for="i in 10" :key="i" />
+    </div>
+
+    <div v-if="isError" class="text-red-500">
+      Encountered an error: {{ error }}
+    </div>
+    <div v-else class="card-grid">
+      <Card
+        v-for="c in countries"
+        :key="c.ccn3"
+        :flag="c.flags.svg"
+        :name="c.name.common"
+        :capital="c.capital"
+        :population="c.population"
+        :region="c.region"
+        @click="router.push(`/${c.cca3}`)"
+      />
+    </div>
+    <Paginator
+      v-if="total > 1"
+      :page="page"
+      :total="total"
+      @nextPage="nextPage"
+      @prevPage="prevPage"
+      @firstPage="firstPage"
+      @lastPage="lastPage"
+    />
+  </div>
+</template>
+
+<style lang="postcss" scoped>
+.card-grid {
+  @apply grid px-10 sm:px-0 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 mt-10 m-auto container text-blue-960 dark:text-white items-start;
+}
+</style>
