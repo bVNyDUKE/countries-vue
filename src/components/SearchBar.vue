@@ -47,27 +47,29 @@
       name="search"
       placeholder="Search for a country..."
       class="flex-grow focus:outline-none dark:bg-blue-950 text-grey-950 dark:text-white"
-    >
+    />
   </div>
 </template>
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { filters } from '../store'
+import { onMounted, ref, watch } from "vue";
+import { watchDebounced } from "@vueuse/core";
+import { filters } from "../store";
 
-const searching = ref(false)
-const searchInput = ref('')
+const searching = ref(false);
+const searchInput = ref("");
 
-onMounted(() => searchInput.value = filters.search)
+onMounted(() => (searchInput.value = filters.search));
 
-var timeout
-watch(searchInput, () => {
-  clearTimeout(timeout)
-  searching.value = true
-  timeout = setTimeout(() => {
-    searching.value = false
-    filters.search = searchInput
-  }, 500)
-})
+watch(searchInput, () => (searching.value = true));
 
-
+watchDebounced(
+  searchInput,
+  () => {
+    filters.search = searchInput.value;
+    searching.value = false;
+  },
+  {
+    debounce: 500,
+  }
+);
 </script>
