@@ -1,10 +1,12 @@
 <script setup>
-defineProps({
-  page: Number,
-  total: Number,
-});
+import { store } from "../store";
 
-defineEmits(["nextPage", "prevPage", "firstPage", "lastPage"]);
+const { total } = defineProps(["total"]);
+
+const prevPage = () => store.page !== 1 && store.page--;
+const nextPage = () => store.page !== total && store.page++;
+const firstPage = () => (store.page = 1);
+const lastPage = () => (store.page = total);
 </script>
 
 <style lang="postcss" scoped>
@@ -15,25 +17,17 @@ defineEmits(["nextPage", "prevPage", "firstPage", "lastPage"]);
 
 <template>
   <div class="p-10 m-auto container flex justify-between">
-    <button class="button" @click="$emit('firstPage')" :disabled="page === 1">
+    <button class="button" @click="firstPage" :disabled="store.page === 1">
       &lt;&lt;
     </button>
-    <button class="button" @click="$emit('prevPage')" :disabled="page === 1">
+    <button class="button" @click="prevPage" :disabled="store.page === 1">
       &lt;
     </button>
-    <div class="button">page {{ page }} of {{ total }}</div>
-    <button
-      class="button"
-      @click="$emit('nextPage')"
-      :disabled="page === total"
-    >
+    <div class="button">page {{ store.page }} of {{ total }}</div>
+    <button class="button" @click="nextPage" :disabled="store.page === total">
       &gt;
     </button>
-    <button
-      class="button"
-      @click="$emit('lastPage')"
-      :disabled="page === total"
-    >
+    <button class="button" @click="lastPage" :disabled="store.page === total">
       &gt;&gt;
     </button>
   </div>

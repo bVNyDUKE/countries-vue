@@ -1,6 +1,7 @@
 import { reactive } from "vue";
 
-export const filters = reactive({
+export const store = reactive({
   search: "",
   region: "",
+  page: 1,
 });

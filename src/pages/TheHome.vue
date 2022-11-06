@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import { filters } from "../store";
+import { store } from "../store";
 import { getAllCountries } from "../api";
 
 import SearchBar from "../components/SearchBar.vue";
@@ -11,7 +11,6 @@ import CardLoader from "../components/CardLoader.vue";
 import Paginator from "../components/Paginator.vue";
 
 const router = useRouter();
-const page = ref(1);
 const total = ref(0);
 
 const { isLoading, isError, data, error } = getAllCountries();
@@ -22,34 +21,29 @@ const countries = computed(() => {
   }
 
   let withFilter =
-    filters.search === ""
+    store.search === ""
       ? data.value
       : data.value?.filter((country) =>
           country.name.official
             .toLowerCase()
-            .includes(filters.search.toLowerCase())
+            .includes(store.search.toLowerCase())
         );
 
   withFilter =
-    filters.region === ""
+    store.region === ""
       ? withFilter
-      : withFilter.filter((country) => country.region === filters.region);
+      : withFilter.filter((country) => country.region === store.region);
 
   total.value = Math.ceil(withFilter.length / 20);
 
   if (withFilter.length > 20) {
-    const rangeFrom = (page.value - 1) * 20;
-    const rangeTo = page.value * 20;
+    const rangeFrom = (store.page - 1) * 20;
+    const rangeTo = store.page * 20;
     return withFilter.slice(rangeFrom, rangeTo);
   }
 
   return withFilter;
 });
-
-const prevPage = () => page.value !== 1 && page.value--;
-const nextPage = () => page.value !== total.value && page.value++;
-const firstPage = () => (page.value = 1);
-const lastPage = () => (page.value = total.value);
 </script>
 
 <template>
@@ -79,15 +73,7 @@ const lastPage = () => (page.value = total.value);
         @click="router.push(`/${c.cca3}`)"
       />
     </div>
-    <Paginator
-      v-if="total > 1"
-      :page="page"
-      :total="total"
-      @nextPage="nextPage"
-      @prevPage="prevPage"
-      @firstPage="firstPage"
-      @lastPage="lastPage"
-    />
+    <Paginator v-if="total > 1" :total="total" />
   </div>
 </template>
 

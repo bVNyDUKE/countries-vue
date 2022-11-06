@@ -52,12 +52,12 @@
 </template>
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import { filters } from "../store";
+import { store } from "../store";
 
 const searching = ref(false);
 const searchInput = ref("");
 
-onMounted(() => (searchInput.value = filters.search));
+onMounted(() => (searchInput.value = store.search));
 
 let timeout;
 watch(searchInput, () => {
@@ -65,7 +65,7 @@ watch(searchInput, () => {
   searching.value = true;
   timeout = setTimeout(() => {
     searching.value = false;
-    filters.search = searchInput.value;
+    store.search = searchInput.value;
   }, 500);
 });
 </script>

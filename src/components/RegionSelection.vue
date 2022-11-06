@@ -59,7 +59,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
-import { filters } from "../store";
+import { store } from "../store";
 
 const regions = [
   "Africa",
@@ -90,7 +90,7 @@ const handleClickOutside = (event) => {
 };
 
 onMounted(() => {
-  selected.value = filters.region;
+  selected.value = store.region;
   document.addEventListener("click", handleClickOutside, true);
 });
 onUnmounted(() =>
@@ -98,7 +98,7 @@ onUnmounted(() =>
 );
 
 const dropdownClick = (region) => {
-  selected.value = filters.region = region;
+  selected.value = store.region = region;
   show.value = false;
 };
 </script>
