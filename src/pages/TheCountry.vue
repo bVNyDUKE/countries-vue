@@ -1,16 +1,16 @@
 <script setup>
-import { useRoute, useRouter } from "vue-router";
-import { getCountryByCode } from "../api";
-import CountryLoader from "../components/CountryLoader.vue";
+import { useRoute, useRouter } from 'vue-router'
+import { getCountryByCode } from '../api'
+import CountryLoader from '../components/CountryLoader.vue'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 const {
   isLoading,
   isError,
   data: country,
-} = getCountryByCode(route.params.country);
+} = getCountryByCode(route.params.country)
 </script>
 
 <template>
@@ -36,13 +36,17 @@ const {
             d="M7 16l-4-4m0 0l4-4m-4 4h18"
           />
         </svg>
-        <div class="font-semibold">Back</div>
+        <div class="font-semibold">
+          Back
+        </div>
       </button>
     </div>
     <div v-if="isLoading">
       <CountryLoader />
     </div>
-    <div v-else-if="isError">An error occured</div>
+    <div v-else-if="isError">
+      An error occured
+    </div>
     <div
       v-else
       class="lg:flex lg:items-center lg:flex-col xl:flex-row xl:justify-start xl:space-x-10"
@@ -50,7 +54,7 @@ const {
       <img
         class="object-cover sm:w-[645px] sm:h-[465px] float-left"
         :src="country.flag"
-      />
+      >
 
       <div class="clear-left">
         <div class="space-y-10">
@@ -98,9 +102,7 @@ const {
             </div>
           </div>
           <div class="w-62 space-y-5">
-            <span class="inline-block text-xl font-bold mr-5"
-              >Border Countries:</span
-            >
+            <span class="inline-block text-xl font-bold mr-5">Border Countries:</span>
             <span
               v-for="border in country.borders"
               :key="border"
@@ -111,8 +113,7 @@ const {
                   params: { country: border.code },
                 })
               "
-              >{{ border.name }}</span
-            >
+            >{{ border.name }}</span>
           </div>
         </div>
       </div>

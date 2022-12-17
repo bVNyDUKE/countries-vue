@@ -1,49 +1,53 @@
 <script setup>
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import { store } from "../store";
-import { getAllCountries } from "../api";
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { store } from '../store'
+import { getAllCountries } from '../api'
 
-import SearchBar from "../components/SearchBar.vue";
-import RegionSelection from "../components/RegionSelection.vue";
-import Card from "../components/Card.vue";
-import CardLoader from "../components/CardLoader.vue";
-import Paginator from "../components/Paginator.vue";
+import SearchBar from '../components/SearchBar.vue'
+import RegionSelection from '../components/RegionSelection.vue'
+import Card from '../components/Card.vue'
+import CardLoader from '../components/CardLoader.vue'
+import Paginator from '../components/Paginator.vue'
 
-const router = useRouter();
-const total = ref(0);
+const router = useRouter()
 
-const { isLoading, isError, data, error } = getAllCountries();
+const { isLoading, isError, data, error } = getAllCountries()
 
-const countries = computed(() => {
+const filtered = computed(() => {
   if (isLoading.value) {
-    return [];
+    return []
   }
 
   let withFilter =
-    store.search === ""
+    store.search === ''
       ? data.value
       : data.value?.filter((country) =>
-          country.name.official
-            .toLowerCase()
-            .includes(store.search.toLowerCase())
-        );
+        country.name.official
+          .toLowerCase()
+          .includes(store.search.toLowerCase())
+      )
 
   withFilter =
-    store.region === ""
+    store.region === ''
       ? withFilter
-      : withFilter.filter((country) => country.region === store.region);
+      : withFilter.filter((country) => country.region === store.region)
 
-  total.value = Math.ceil(withFilter.length / 20);
 
-  if (withFilter.length > 20) {
-    const rangeFrom = (store.page - 1) * 20;
-    const rangeTo = store.page * 20;
-    return withFilter.slice(rangeFrom, rangeTo);
+  return withFilter
+})
+
+const total = computed(() => Math.ceil(filtered.value.length / 20))
+const paginated = computed(() => {
+  if (filtered.value.length <= 20){
+    return filtered.value
   }
 
-  return withFilter;
-});
+  const rangeFrom = (store.page - 1) * 20
+  const rangeTo = store.page * 20
+  return filtered.value.slice(rangeFrom, rangeTo)
+})
+
 </script>
 
 <template>
@@ -54,16 +58,28 @@ const countries = computed(() => {
       <SearchBar />
       <RegionSelection />
     </div>
-    <div v-if="isLoading" class="card-grid">
-      <CardLoader v-for="i in 10" :key="i" />
+    <div
+      v-if="isLoading"
+      class="card-grid"
+    >
+      <CardLoader
+        v-for="i in 10"
+        :key="i"
+      />
     </div>
 
-    <div v-if="isError" class="text-red-500">
+    <div
+      v-if="isError"
+      class="text-red-500"
+    >
       Encountered an error: {{ error }}
     </div>
-    <div v-else class="card-grid">
+    <div
+      v-else
+      class="card-grid"
+    >
       <Card
-        v-for="c in countries"
+        v-for="c in paginated"
         :key="c.ccn3"
         :flag="c.flags.svg"
         :name="c.name.common"
@@ -73,7 +89,10 @@ const countries = computed(() => {
         @click="router.push(`/${c.cca3}`)"
       />
     </div>
-    <Paginator v-if="total > 1" :total="total" />
+    <Paginator
+      v-if="total > 1"
+      :total="total"
+    />
   </div>
 </template>
 
